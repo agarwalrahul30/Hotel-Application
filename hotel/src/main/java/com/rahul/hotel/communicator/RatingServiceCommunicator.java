@@ -15,7 +15,7 @@ public class RatingServiceCommunicator {
 		restTemplate = restTemplateBuilder.build();
 	}
 	
-	public long getUpdatedRating(String id) {
+	public Long getUpdatedRating(String id) {
 		String url = "http://localhost:8081/rating/id/";
 		
 		ResponseEntity<Long> response = restTemplate.getForEntity(url+id, Long.class);

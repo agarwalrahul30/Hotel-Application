@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import com.rahul.hotel.communicator.RatingServiceCommunicator;
 import com.rahul.hotel.domain.Hotel;
 import com.rahul.hotel.exceptions.HotelNotFoundException;
 
@@ -16,6 +18,9 @@ public class HotelService {
 	
 	private List<Hotel> hotelList = new ArrayList<>();
 	private Map<String, Hotel> hotelMapById = new HashMap<String, Hotel>();
+	
+	@Autowired
+	RatingServiceCommunicator ratingServiceCommunicator;
 	
 	public void addHotel(Hotel hotel) {
 		hotelList.add(hotel);
@@ -26,7 +31,12 @@ public class HotelService {
 		if(ObjectUtils.isEmpty(hotelMapById.get(id))) {
 			throw new HotelNotFoundException("Hotel with id:"+id+" does not exist.");
 		}
-		return hotelMapById.get(id);
+		
+		Hotel hotel = hotelMapById.get(id);
+		Long updatedRating = ratingServiceCommunicator.getUpdatedRating(id);
+		hotel.setRating(updatedRating);
+		
+		return hotel;
 	}
 	
 	public List<Hotel> getAllHotels() {
