@@ -23,8 +23,13 @@ public class HotelService {
 	RatingServiceCommunicator ratingServiceCommunicator;
 	
 	public void addHotel(Hotel hotel) {
-		hotelList.add(hotel);
-		hotelMapById.put(hotel.getId(), hotel);
+		Map<String, Long> ratingMap = new HashMap<>();
+		if(!hotelMapById.containsKey(hotel.getId())) {
+			hotelList.add(hotel);
+			hotelMapById.put(hotel.getId(), hotel);
+			ratingMap.put(hotel.getId(), hotel.getRating());
+			ratingServiceCommunicator.addRating(ratingMap);
+		}
 	}
 	
 	public Hotel getHotelById(String id) {
@@ -46,6 +51,8 @@ public class HotelService {
 	public void deleteHotelById(String id) {
 		hotelList.remove(getHotelById(id));
 		hotelMapById.remove(id);
+		
+		ratingServiceCommunicator.deleteRating(id);
 	}
 	
 	public void updateHotel(Hotel updatedHotel) {
@@ -55,5 +62,9 @@ public class HotelService {
 		
 		//update in Map
 		hotelMapById.put(updatedHotel.getId(), updatedHotel);
+		
+		Map<String, Long> ratingMap = new HashMap<>();
+		ratingMap.put(updatedHotel.getId(), updatedHotel.getRating());
+		ratingServiceCommunicator.updateRating(ratingMap);
 	}
 }
